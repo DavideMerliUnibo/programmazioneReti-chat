@@ -38,23 +38,25 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
     broadcast(bytes(msg, "utf8"))
     #aggiorna il dizionario clients creato all'inizio
     clients[client] = nome
-    players.append(g.Giocatore(nome,ruoli[r.randrange(6)],"bho"))
+    player=g.Giocatore(nome,ruoli[r.randrange(6)],0)
+    players.append(player)
     print(players[0].ruolo)
     
     print("players:", len(clients))
     
 #si mette in ascolto del thread del singolo client e ne gestisce l'invio dei messaggi o l'uscita dalla Chat
+    domanda = None    
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("{quit}", "utf8") and msg != bytes("{start}", "utf8"):
-            broadcast(msg, nome+": ")
-        elif msg == bytes("{quit}", "utf8"):
-            broadcast(bytes("%s ha abbandonato la Chat." % nome, "utf8"))
-            client.send(bytes("{quit}", "utf8"))
-            client.close()
-            del clients[client]
-            break
-        else:
+        
+        if domanda != None:
+            if domanda.risposta == msg:
+                client.send(bytes("Risposta esatta!", "utf8"))
+                player.punteggio=player.punteggio + 1
+                domanda = None
+            client.send(bytes("Risposta sbagliata!", "utf8"))
+            continue
+        if msg == bytes("{start}", "utf8"):
             global ready
             ready = ready + 1
             print("ready:", ready)
@@ -63,6 +65,19 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
                 global startGame
                 startGame = True
                 broadcast(bytes("INIZIO GIOCO!", "utf8"))
+        elif msg == bytes("{quit}", "utf8"):
+            broadcast(bytes("%s ha abbandonato la Chat." % nome, "utf8"))
+            client.send(bytes("{quit}", "utf8"))
+            client.close()
+            del clients[client]
+            break
+        elif msg == bytes("{question}", "utf8") :
+            domanda=domande[r.randrange(len(domande))]
+            player.stato= False
+            client.send(bytes(domanda.domanda, "utf8"))
+        else:
+            broadcast(msg, nome+": ")
+            
             
 
 """ La funzione, che segue, invia un messaggio in broadcast a tutti i client."""
