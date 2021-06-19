@@ -13,17 +13,17 @@ def receive():
             #quando viene chiamata la funzione receive, si mette in ascolto dei messaggi che
             #arrivano sul socket
             my_msg = client_socket.recv(BUFSIZ).decode("utf8")
-            if (my_msg == "INIZIO GIOCO!"):
+            if my_msg == "INIZIO GIOCO!":
                 questionText.pack()
                 answerField.pack()
                 btn_answer.pack()
                 t=random.randint(1,3)
                 gameFrame= tk.Frame(master = window)
-                if(t==1):
+                if t==1:
                     btn_A=tk.Button(master = gameFrame, text = "A", command = close)
                     btn_B=tk.Button(master = gameFrame, text = "B", command = question)
                     btn_C=tk.Button(master = gameFrame, text = "C", command = question)
-                elif(t==2):  
+                elif t==2:  
                     btn_B=tk.Button(master = gameFrame, text = "B", command = close)
                     btn_A=tk.Button(master = gameFrame, text = "A", command = question)
                     btn_C=tk.Button(master = gameFrame, text = "C", command = question)
@@ -31,24 +31,32 @@ def receive():
                      btn_C=tk.Button(master = gameFrame, text = "C", command = close)
                      btn_B=tk.Button(master = gameFrame, text = "B", command = question)
                      btn_A=tk.Button(master = gameFrame, text = "A", command = question)
-                print(t)
+              
                 btn_A.pack(side=tk.LEFT)
                 btn_B.pack(side=tk.LEFT)           
                 btn_C.pack(side=tk.LEFT)
                 gameFrame.pack()
             #e facciamo in modo che il cursore sia visibile al termine degli stessi
-            text['state'] = 'normal'
-            text.insert(tk.END, my_msg)
-            text.insert(tk.END, '\n')
-            text['state'] = 'disabled'
+            if selectChat:
+                text['state'] = 'normal'
+                text.insert(tk.END, my_msg)
+                text.insert(tk.END, '\n')
+                text['state'] = 'disabled'
+            else :
+                questionText['state'] = 'normal'
+                questionText.insert(tk.END, my_msg)
+                questionText.insert(tk.END, '\n')
+                questionText['state'] = 'disabled'
             # Nel caso di errore e' probabile che il client abbia abbandonato la chat.
         except OSError:  
             break
 
 def question():
+    global selectChat 
+    selectChat=False
+    entryField['state']='disabled'
     msg.set("{question}")
     send()
-    btn_ready['state'] = 'disabled'
 """La funzione che segue gestisce l'invio dei messaggi."""
 def send(event = None):
     my_msg = msg.get()
@@ -75,12 +83,16 @@ def on_closing(event = None):
     send()
     
 def sendAnswer():
+    global selectChat 
+    selectChat=True
+    entryField['state']='normal'
     questionText['state'] = 'normal'
-    questionText.insert(tk.END, answer.get())
-    questionText.insert(tk.END, '\n')
+    my_answer = answer.get()
+    client_socket.send(bytes(my_answer, "utf8"))
     answer.set('')
     questionText['state'] = 'disabled'
 
+selectChat=True
 window = tk.Tk()
 window.title("Chatgame")
 
