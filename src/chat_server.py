@@ -49,13 +49,14 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
     domanda = None    
     while True:
         msg = client.recv(BUFSIZ)
-        
         if domanda != None:
-            if domanda.risposta == msg:
+            if bytes(domanda.risposta, "utf8").lower() == msg.lower():
                 client.send(bytes("Risposta esatta!", "utf8"))
-                player.punteggio=player.punteggio + 1
-                domanda = None
-            client.send(bytes("Risposta sbagliata!", "utf8"))
+                player.punteggio = player.punteggio + 1
+            else:
+                client.send(bytes("Risposta sbagliata!", "utf8"))
+                player.punteggio = player.punteggio - 1
+            domanda = None
             continue
         if msg == bytes("{start}", "utf8"):
             global ready
@@ -73,11 +74,10 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
             del clients[client]
             break
         elif msg == bytes("{question}", "utf8") :
-            domanda=domande[r.randrange(len(domande))]
-            player.stato= False
+            domanda = domande[r.randrange(len(domande))]
             client.send(bytes(domanda.domanda, "utf8"))
         else:
-            broadcast(msg, nome+": ")
+            broadcast(msg, nome + ": ")
             
             
 
@@ -96,10 +96,9 @@ ruoli = ["atleta","artista","geografo",
          "attore","scienziato","storico"]
 domande = []
 with open(os.getcwd() + '\\domande.json') as f:
-  data = json.load(f)
+    data = json.load(f)
 for valore in data:
-    domande.append(d.Domanda(valore['materia'],valore['domanda'],valore['risposta']));
-
+    domande.append(d.Domanda(valore['materia'], valore['domanda'], valore['risposta']));
 
 HOST = ''
 PORT = 53000
