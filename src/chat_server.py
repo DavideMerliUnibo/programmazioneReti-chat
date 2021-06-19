@@ -27,21 +27,21 @@ def accetta_connessioni_in_entrata():
 
 """La funzione seguente gestisce la connessione di un singolo client."""
 def gestice_client(client):  # Prende il socket del client come argomento della funzione.
-    nome = client.recv(BUFSIZ).decode("utf8")
+    nome = client.recv(BUFSIZ).decode("utf8")    
+
+    #aggiorna il dizionario clients creato all'inizio
+    clients[client] = nome
+    ruolo = ruoli[r.randrange(6)]
+    players.append(g.Giocatore(nome, ruolo, 0))
+    
     #da il benvenuto al client e gli indica come fare per uscire dalla chat quando ha terminato
-    benvenuto = 'Benvenuto %s!' % nome
+    benvenuto = 'Benvenuto %s! Il tuo ruolo è %s.' % (nome, ruolo)
     client.send(bytes(benvenuto, "utf8"))
     client.send(bytes('Se vuoi lasciare la Chat, scrivi {quit}.', "utf8"))
     client.send(bytes('Quando sei pronto a giocare scrivi {start}.', "utf8"))
     msg = "%s si è unito alla chat!" % nome
     #messaggio in broadcast con cui vengono avvisati tutti i client connessi che l'utente x è entrato
     broadcast(bytes(msg, "utf8"))
-    #aggiorna il dizionario clients creato all'inizio
-    clients[client] = nome
-    players.append(g.Giocatore(nome,ruoli[r.randrange(6)],"bho"))
-    print(players[0].ruolo)
-    
-    print("players:", len(clients))
     
 #si mette in ascolto del thread del singolo client e ne gestisce l'invio dei messaggi o l'uscita dalla Chat
     while True:
