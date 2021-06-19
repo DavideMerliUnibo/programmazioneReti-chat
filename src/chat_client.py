@@ -4,6 +4,7 @@ from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter as tk
 import sys
+import random
 
 """La funzione che segue ha il compito di gestire la ricezione dei messaggi."""
 def receive():
@@ -16,7 +17,25 @@ def receive():
                 questionText.pack()
                 answerField.pack()
                 btn_answer.pack()
-            #visualizziamo l'elenco dei messaggi sullo schermo
+                t=random.randint(1,3)
+                gameFrame= tk.Frame(master = window)
+                if(t==1):
+                    btn_A=tk.Button(master = gameFrame, text = "A", command = close)
+                    btn_B=tk.Button(master = gameFrame, text = "B", command = question)
+                    btn_C=tk.Button(master = gameFrame, text = "C", command = question)
+                elif(t==2):  
+                    btn_B=tk.Button(master = gameFrame, text = "B", command = close)
+                    btn_A=tk.Button(master = gameFrame, text = "A", command = question)
+                    btn_C=tk.Button(master = gameFrame, text = "C", command = question)
+                else:
+                     btn_C=tk.Button(master = gameFrame, text = "C", command = close)
+                     btn_B=tk.Button(master = gameFrame, text = "B", command = question)
+                     btn_A=tk.Button(master = gameFrame, text = "A", command = question)
+                print(t)
+                btn_A.pack(side=tk.LEFT)
+                btn_B.pack(side=tk.LEFT)           
+                btn_C.pack(side=tk.LEFT)
+                gameFrame.pack()
             #e facciamo in modo che il cursore sia visibile al termine degli stessi
             text['state'] = 'normal'
             text.insert(tk.END, my_msg)
@@ -26,6 +45,10 @@ def receive():
         except OSError:  
             break
 
+def question():
+    msg.set("{question}")
+    send()
+    btn_ready['state'] = 'disabled'
 """La funzione che segue gestisce l'invio dei messaggi."""
 def send(event = None):
     my_msg = msg.get()
