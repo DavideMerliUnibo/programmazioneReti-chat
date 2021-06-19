@@ -12,6 +12,10 @@ def receive():
             #quando viene chiamata la funzione receive, si mette in ascolto dei messaggi che
             #arrivano sul socket
             my_msg = client_socket.recv(BUFSIZ).decode("utf8")
+            if (my_msg == "INIZIO GIOCO!"):
+                questionText.pack()
+                answerField.pack()
+                btn_answer.pack()
             #visualizziamo l'elenco dei messaggi sullo schermo
             #e facciamo in modo che il cursore sia visibile al termine degli stessi
             text['state'] = 'normal'
@@ -43,14 +47,21 @@ def close(event = None):
     sys.exit()
 
 """La funzione che segue viene invocata quando viene chiusa la finestra della chat."""
-def on_closing(event=None):
+def on_closing(event = None):
     msg.set("{quit}")
     send()
+    
+def sendAnswer():
+    questionText['state'] = 'normal'
+    questionText.insert(tk.END, answer.get())
+    questionText.insert(tk.END, '\n')
+    answer.set('')
+    questionText['state'] = 'disabled'
 
 window = tk.Tk()
 window.title("Chatgame")
 
-text = tk.Text(height = 20, width = 50)
+text = tk.Text(height = 15, width = 50)
 text['state'] = 'disabled'
 text.pack()
 
@@ -73,6 +84,28 @@ frame.pack()
 window.bind('<Return>', send)
 window.bind('<Escape>', close)
 window.protocol("WM_DELETE_WINDOW", close)
+
+
+
+
+
+
+#ASPE
+questionText = tk.Text(height = 3, width = 50)
+questionText.insert(tk.END, "Domanda:\n")
+questionText['state'] = 'disabled'
+answer = tk.StringVar()
+answerField = tk.Entry(width = 25, textvariable = answer)
+btn_answer = tk.Button(text = 'Answer', command = sendAnswer)
+#OK
+
+
+
+
+
+
+
+
 
 #----Connessione al Server----
 #HOST = input('Inserire il Server host: ')
