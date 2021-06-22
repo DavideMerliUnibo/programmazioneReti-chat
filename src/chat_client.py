@@ -26,14 +26,14 @@ def receive():
                 if t==1:
                     btn_A.config(command = close)
                     btn_B.config(command = lambda: question(gameFrame))
-                    btn_C.config(command =lambda: question(gameFrame))
+                    btn_C.config(command = lambda: question(gameFrame))
                 elif t==2:  
                     btn_B.config(command = close)
-                    btn_A.config(command =lambda: question(gameFrame))
+                    btn_A.config(command = lambda: question(gameFrame))
                     btn_C.config(command = lambda: question(gameFrame))
                 else:
                     btn_C.config(command = close)
-                    btn_A.config(command =lambda: question(gameFrame))
+                    btn_A.config(command = lambda: question(gameFrame))
                     btn_B.config(command = lambda: question(gameFrame))              
                 btn_A.pack(side = tk.LEFT)
                 btn_B.pack(side = tk.LEFT)           
@@ -42,10 +42,14 @@ def receive():
             #e facciamo in modo che il cursore sia visibile al termine degli stessi
             elif my_msg == "Risposta esatta!":
                 messagebox.showinfo("Esito","Esattooo!!!")
-                questionText.delete("0",tk.END)
+                questionText['state'] = 'normal'
+                questionText.delete('1.0', tk.END)
+                questionText['state'] = 'disabled'
             elif my_msg =="Risposta sbagliata!":
                 messagebox.showinfo("Esito","Sbagliato!!!")
-                questionText.delete("1.0",tk.END)
+                questionText['state'] = 'normal'
+                questionText.delete('1.0', tk.END)
+                questionText['state'] = 'disabled'
             else:
                 if selectChat:
                     text['state'] = 'normal'
