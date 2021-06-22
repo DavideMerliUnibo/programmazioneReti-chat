@@ -6,6 +6,7 @@ import tkinter as tk
 from tkinter import messagebox
 import sys
 import random
+import timer
 
 """La funzione che segue ha il compito di gestire la ricezione dei messaggi."""
 def receive():
@@ -15,11 +16,16 @@ def receive():
             #arrivano sul socket
             my_msg = client_socket.recv(BUFSIZ).decode("utf8")
             if my_msg == "INIZIO GIOCO!":
+                #inizio timer
+                timerLabel = tk.Label(text = '00:00')
+                time = timer.Timer(timerLabel)
+                timerLabel.pack()
+                #fine timer
                 questionText.pack()
                 answerField.pack()
                 btn_answer.pack()
                 t = random.randint(1,3)
-                gameFrame= tk.Frame(master = window)
+                gameFrame = tk.Frame(master = window)
                 btn_A = tk.Button(master = gameFrame, text = "A")
                 btn_B = tk.Button(master = gameFrame, text = "B")
                 btn_C = tk.Button(master = gameFrame, text = "C")
