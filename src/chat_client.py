@@ -3,6 +3,7 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import tkinter as tk
+from tkinter import messagebox
 import sys
 import random
 
@@ -17,51 +18,58 @@ def receive():
                 questionText.pack()
                 answerField.pack()
                 btn_answer.pack()
-<<<<<<< HEAD
-                t=1
-                #t=random.randint(1,3)
-=======
                 t = random.randint(1,3)
->>>>>>> 1bf92132cd1cc136a68f99e23ad36493f4430e26
                 gameFrame= tk.Frame(master = window)
+                btn_A = tk.Button(master = gameFrame, text = "A")
+                btn_B = tk.Button(master = gameFrame, text = "B")
+                btn_C = tk.Button(master = gameFrame, text = "C")
                 if t==1:
-                    btn_A = tk.Button(master = gameFrame, text = "A", command = close)
-                    btn_B = tk.Button(master = gameFrame, text = "B", command = question)
-                    btn_C = tk.Button(master = gameFrame, text = "C", command = question)
+                    btn_A.config(command = close)
+                    btn_B.config(command = lambda: question(gameFrame))
+                    btn_C.config(command =lambda: question(gameFrame))
                 elif t==2:  
-                    btn_B = tk.Button(master = gameFrame, text = "B", command = close)
-                    btn_A = tk.Button(master = gameFrame, text = "A", command = question)
-                    btn_C = tk.Button(master = gameFrame, text = "C", command = question)
+                    btn_B.config(command = close)
+                    btn_A.config(command =lambda: question(gameFrame))
+                    btn_C.config(command = lambda: question(gameFrame))
                 else:
-                     btn_C = tk.Button(master = gameFrame, text = "C", command = close)
-                     btn_B = tk.Button(master = gameFrame, text = "B", command = question)
-                     btn_A = tk.Button(master = gameFrame, text = "A", command = question)
-              
+                    btn_C.config(command = close)
+                    btn_A.config(command =lambda: question(gameFrame))
+                    btn_B.config(command = lambda: question(gameFrame))              
                 btn_A.pack(side = tk.LEFT)
                 btn_B.pack(side = tk.LEFT)           
                 btn_C.pack(side = tk.LEFT)
                 gameFrame.pack()
             #e facciamo in modo che il cursore sia visibile al termine degli stessi
-            if selectChat:
-                text['state'] = 'normal'
-                text.insert(tk.END, my_msg)
-                text.insert(tk.END, '\n')
-                text['state'] = 'disabled'
-            else :
-                questionText['state'] = 'normal'
-                questionText.insert(tk.END, my_msg)
-                questionText.insert(tk.END, '\n')
-                questionText['state'] = 'disabled'
+            elif my_msg == "Risposta esatta!":
+                messagebox.showinfo("Esito","Esattooo!!!")
+                questionText.delete("0",tk.END)
+            elif my_msg =="Risposta sbagliata!":
+                messagebox.showinfo("Esito","Sbagliato!!!")
+                questionText.delete("1.0",tk.END)
+            else:
+                if selectChat:
+                    text['state'] = 'normal'
+                    text.insert(tk.END, my_msg)
+                    text.insert(tk.END, '\n')
+                    text['state'] = 'disabled'
+          
+                else :
+                    questionText['state'] = 'normal'
+                    questionText.insert(tk.END, my_msg)
+                    questionText.insert(tk.END, '\n')
+                    questionText['state'] = 'disabled'
             # Nel caso di errore e' probabile che il client abbia abbandonato la chat.
         except OSError:  
             break
 
-def question():
+def question(gameFrame):
     global selectChat 
     selectChat = False
+    answerField['state'] = 'normal'
     entryField['state'] = 'disabled'
     msg.set("{question}")
     send()
+    gameFrame.destroy()
 """La funzione che segue gestisce l'invio dei messaggi."""
 def send(event = None):
     my_msg = msg.get()
@@ -88,9 +96,13 @@ def on_closing(event = None):
     send()
     
 def sendAnswer():
-    global selectChat 
+    if not answerField.get():
+        messagebox.showwarning("Attenzione","Inserire risposta!")
+        return
+    global selectChat
     selectChat = True
     entryField['state'] = 'normal'
+    answerField['state']='disabled'
     questionText['state'] = 'normal'
     my_answer = answer.get()
     client_socket.send(bytes(my_answer, "utf8"))

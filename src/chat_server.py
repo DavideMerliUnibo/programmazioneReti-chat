@@ -77,6 +77,7 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
             break
         elif msg == bytes("{question}", "utf8") :
             domanda = domande[r.randrange(len(domande))]
+            client.send(bytes("INIZIO GIOCO!", "utf8"))
             client.send(bytes(domanda.domanda, "utf8"))
         else:
             broadcast(msg, nome + ": ")
