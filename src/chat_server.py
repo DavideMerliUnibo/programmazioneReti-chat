@@ -27,20 +27,21 @@ def accetta_connessioni_in_entrata():
 
 """La funzione seguente gestisce la connessione di un singolo client."""
 def gestice_client(client):  # Prende il socket del client come argomento della funzione.
-    nome = client.recv(BUFSIZ).decode("utf8")
+    nome = client.recv(BUFSIZ).decode("utf8")    
+
+    #aggiorna il dizionario clients creato all'inizio
+    clients[client] = nome
+    player = g.Giocatore(nome, ruoli[r.randrange(6)], 0)
+    players.append(player)
+    
     #da il benvenuto al client e gli indica come fare per uscire dalla chat quando ha terminato
-    benvenuto = 'Benvenuto %s!' % nome
+    benvenuto = 'Benvenuto %s! Il tuo ruolo è %s.' % (nome, player.ruolo)
     client.send(bytes(benvenuto, "utf8"))
     client.send(bytes('Se vuoi lasciare la Chat, scrivi {quit}.', "utf8"))
     client.send(bytes('Quando sei pronto a giocare scrivi {start}.', "utf8"))
     msg = "%s si è unito alla chat!" % nome
     #messaggio in broadcast con cui vengono avvisati tutti i client connessi che l'utente x è entrato
     broadcast(bytes(msg, "utf8"))
-    #aggiorna il dizionario clients creato all'inizio
-    clients[client] = nome
-    player=g.Giocatore(nome,ruoli[r.randrange(6)],0)
-    players.append(player)
-    print(players[0].ruolo)
     
     print("players:", len(clients))
     
@@ -48,18 +49,16 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
     domanda = None    
     while True:
         msg = client.recv(BUFSIZ)
-        
         if domanda != None:
-            print(msg)
-           
-            ris = 'b\''+ domanda.risposta+ '\'' 
-            print(ris)
-            print(ris == msg)
-            if ris == msg:
+
+            if bytes(domanda.risposta, "utf8").lower() == msg.lower():
                 client.send(bytes("Risposta esatta!", "utf8"))
-                player.punteggio=player.punteggio + 1
+                player.punteggio = player.punteggio + 1
+            else:
+                client.send(bytes("Risposta sbagliata!", "utf8"))
+                player.punteggio = player.punteggio - 1
             domanda = None
-            client.send(bytes("Risposta sbagliata!", "utf8"))
+
             continue
         if msg == bytes("{start}", "utf8"):
             global ready
@@ -77,12 +76,10 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
             del clients[client]
             break
         elif msg == bytes("{question}", "utf8") :
-            domanda=domande[0]
-            #domanda=domande[r.randrange(len(domande))]
-            player.stato= False
+            domanda = domande[r.randrange(len(domande))]
             client.send(bytes(domanda.domanda, "utf8"))
         else:
-            broadcast(msg, nome+": ")
+            broadcast(msg, nome + ": ")
             
             
 
@@ -101,10 +98,9 @@ ruoli = ["atleta","artista","geografo",
          "attore","scienziato","storico"]
 domande = []
 with open(os.getcwd() + '\\domande.json') as f:
-  data = json.load(f)
+    data = json.load(f)
 for valore in data:
-    domande.append(d.Domanda(valore['materia'],valore['domanda'],valore['risposta']));
-
+    domande.append(d.Domanda(valore['materia'], valore['domanda'], valore['risposta']));
 
 HOST = ''
 PORT = 53000

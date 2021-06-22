@@ -17,25 +17,29 @@ def receive():
                 questionText.pack()
                 answerField.pack()
                 btn_answer.pack()
+<<<<<<< HEAD
                 t=1
                 #t=random.randint(1,3)
+=======
+                t = random.randint(1,3)
+>>>>>>> 1bf92132cd1cc136a68f99e23ad36493f4430e26
                 gameFrame= tk.Frame(master = window)
                 if t==1:
-                    btn_A=tk.Button(master = gameFrame, text = "A", command = close)
-                    btn_B=tk.Button(master = gameFrame, text = "B", command = question)
-                    btn_C=tk.Button(master = gameFrame, text = "C", command = question)
+                    btn_A = tk.Button(master = gameFrame, text = "A", command = close)
+                    btn_B = tk.Button(master = gameFrame, text = "B", command = question)
+                    btn_C = tk.Button(master = gameFrame, text = "C", command = question)
                 elif t==2:  
-                    btn_B=tk.Button(master = gameFrame, text = "B", command = close)
-                    btn_A=tk.Button(master = gameFrame, text = "A", command = question)
-                    btn_C=tk.Button(master = gameFrame, text = "C", command = question)
+                    btn_B = tk.Button(master = gameFrame, text = "B", command = close)
+                    btn_A = tk.Button(master = gameFrame, text = "A", command = question)
+                    btn_C = tk.Button(master = gameFrame, text = "C", command = question)
                 else:
-                     btn_C=tk.Button(master = gameFrame, text = "C", command = close)
-                     btn_B=tk.Button(master = gameFrame, text = "B", command = question)
-                     btn_A=tk.Button(master = gameFrame, text = "A", command = question)
+                     btn_C = tk.Button(master = gameFrame, text = "C", command = close)
+                     btn_B = tk.Button(master = gameFrame, text = "B", command = question)
+                     btn_A = tk.Button(master = gameFrame, text = "A", command = question)
               
-                btn_A.pack(side=tk.LEFT)
-                btn_B.pack(side=tk.LEFT)           
-                btn_C.pack(side=tk.LEFT)
+                btn_A.pack(side = tk.LEFT)
+                btn_B.pack(side = tk.LEFT)           
+                btn_C.pack(side = tk.LEFT)
                 gameFrame.pack()
             #e facciamo in modo che il cursore sia visibile al termine degli stessi
             if selectChat:
@@ -54,8 +58,8 @@ def receive():
 
 def question():
     global selectChat 
-    selectChat=False
-    entryField['state']='disabled'
+    selectChat = False
+    entryField['state'] = 'disabled'
     msg.set("{question}")
     send()
 """La funzione che segue gestisce l'invio dei messaggi."""
@@ -85,15 +89,15 @@ def on_closing(event = None):
     
 def sendAnswer():
     global selectChat 
-    selectChat=True
-    entryField['state']='normal'
+    selectChat = True
+    entryField['state'] = 'normal'
     questionText['state'] = 'normal'
     my_answer = answer.get()
     client_socket.send(bytes(my_answer, "utf8"))
     answer.set('')
     questionText['state'] = 'disabled'
 
-selectChat=True
+selectChat = True
 window = tk.Tk()
 window.title("Chatgame")
 
