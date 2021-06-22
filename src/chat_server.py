@@ -50,10 +50,15 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
         msg = client.recv(BUFSIZ)
         
         if domanda != None:
-            if domanda.risposta == msg:
+            print(msg)
+           
+            ris = 'b\''+ domanda.risposta+ '\'' 
+            print(ris)
+            print(ris == msg)
+            if ris == msg:
                 client.send(bytes("Risposta esatta!", "utf8"))
                 player.punteggio=player.punteggio + 1
-                domanda = None
+            domanda = None
             client.send(bytes("Risposta sbagliata!", "utf8"))
             continue
         if msg == bytes("{start}", "utf8"):
@@ -72,7 +77,8 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
             del clients[client]
             break
         elif msg == bytes("{question}", "utf8") :
-            domanda=domande[r.randrange(len(domande))]
+            domanda=domande[0]
+            #domanda=domande[r.randrange(len(domande))]
             player.stato= False
             client.send(bytes(domanda.domanda, "utf8"))
         else:

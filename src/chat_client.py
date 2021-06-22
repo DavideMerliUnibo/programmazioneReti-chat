@@ -17,7 +17,8 @@ def receive():
                 questionText.pack()
                 answerField.pack()
                 btn_answer.pack()
-                t=random.randint(1,3)
+                t=1
+                #t=random.randint(1,3)
                 gameFrame= tk.Frame(master = window)
                 if t==1:
                     btn_A=tk.Button(master = gameFrame, text = "A", command = close)
