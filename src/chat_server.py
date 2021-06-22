@@ -27,15 +27,24 @@ def accetta_connessioni_in_entrata():
 
 """La funzione seguente gestisce la connessione di un singolo client."""
 def gestice_client(client):  # Prende il socket del client come argomento della funzione.
-    nome = client.recv(BUFSIZ).decode("utf8")    
-
+    #nome = client.recv(BUFSIZ).decode("utf8")
+    giocatorePresente = True
+    while giocatorePresente:
+        giocatorePresente = False
+        nome = client.recv(BUFSIZ).decode("utf8")
+        for p in players:
+            if(p.nome == nome):
+                client.send(bytes('Nome già in uso! Scrivere un altro nome.', 'utf8'))
+                giocatorePresente = True
+                break
+    
     #aggiorna il dizionario clients creato all'inizio
     clients[client] = nome
     player = g.Giocatore(nome, ruoli[r.randrange(6)], 0)
     players.append(player)
     
     #da il benvenuto al client e gli indica come fare per uscire dalla chat quando ha terminato
-    benvenuto = 'Benvenuto %s! Il tuo ruolo è %s.' % (nome, player.ruolo)
+    benvenuto = 'Benvenuto %s! Il tuo ruolo è %s\n.' % (nome, player.ruolo)
     client.send(bytes(benvenuto, "utf8"))
     client.send(bytes('Se vuoi lasciare la Chat, scrivi {quit}.', "utf8"))
     client.send(bytes('Quando sei pronto a giocare scrivi {start}.', "utf8"))
@@ -87,7 +96,7 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
 """ La funzione, che segue, invia un messaggio in broadcast a tutti i client."""
 def broadcast(msg, prefisso=""):  # il prefisso è usato per l'identificazione del nome.
     for utente in clients:
-        utente.send(bytes(prefisso, "utf8")+msg)
+        utente.send(bytes(prefisso, "utf8") + msg)
 
         
 clients = {}
@@ -110,6 +119,7 @@ ADDR = (HOST, PORT)
 
 SERVER = socket(AF_INET, SOCK_STREAM)
 SERVER.bind(ADDR)
+
 
 if __name__ == "__main__":
     SERVER.listen(5)
