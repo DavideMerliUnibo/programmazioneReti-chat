@@ -60,13 +60,13 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
     while True:
         msg = client.recv(BUFSIZ)
         if domanda != None:
-
             if bytes(domanda.risposta, "utf8").lower() == msg.lower():
                 client.send(bytes("Risposta esatta!", "utf8"))
                 player.punteggio = player.punteggio + 1
             else:
                 client.send(bytes("Risposta sbagliata!", "utf8"))
                 player.punteggio = player.punteggio - 1
+            client.send(bytes("Adesso hai " + str(player.punteggio) + (" punti." if player.punteggio != 1 else " punto."), "utf8"))
             domanda = None
 
             continue

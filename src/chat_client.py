@@ -19,11 +19,11 @@ def receive():
                 btn_ready['state'] = 'normal'
             elif my_msg == "INIZIO GIOCO!":
                 #inizio timer
-                timerLabel = tk.Label(text = '02:00s')
                 time = timer.Timer()
+                timerLabel = tk.Label(text = time.converti(time.contatore))
+                timerLabel.pack()
                 timerThread = Thread(target = lambda: aggiornaTimer(timerLabel, time))
                 timerThread.start()
-                timerLabel.pack()
                 #creazione pulsanti e area di testo delle domande
                 questionText.pack()
                 answerField.pack()
