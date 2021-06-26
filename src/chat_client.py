@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Script relativa alla chat del client utilizzato per lanciare la GUI Tkinter."""
 from socket import AF_INET, socket, SOCK_STREAM
-from threading import Thread
 import tkinter as tk
 from tkinter import messagebox
+from threading import Thread
 import sys
 import random
 import timer
@@ -15,37 +15,23 @@ def receive():
             #quando viene chiamata la funzione receive, si mette in ascolto dei messaggi che
             #arrivano sul socket
             my_msg = client_socket.recv(BUFSIZ).decode("utf8")
-            if my_msg == "INIZIO GIOCO!":
+            if my_msg == "{benvenuto}":
+                btn_ready['state'] = 'normal'
+            elif my_msg == "INIZIO GIOCO!":
                 #inizio timer
-                timerLabel = tk.Label(text = '00:00')
-                time = timer.Timer(timerLabel)
+                timerLabel = tk.Label(text = '02:00s')
+                time = timer.Timer()
+                timerThread = Thread(target = lambda: aggiornaTimer(timerLabel, time))
+                timerThread.start()
                 timerLabel.pack()
-                #fine timer
+                #creazione pulsanti e area di testo delle domande
                 questionText.pack()
                 answerField.pack()
                 btn_answer.pack()
-                t = random.randint(1,3)
-                gameFrame = tk.Frame(master = window)
-                btn_A = tk.Button(master = gameFrame, text = "A")
-                btn_B = tk.Button(master = gameFrame, text = "B")
-                btn_C = tk.Button(master = gameFrame, text = "C")
-                if t==1:
-                    btn_A.config(command = close)
-                    btn_B.config(command = lambda: question(gameFrame))
-                    btn_C.config(command = lambda: question(gameFrame))
-                elif t==2:  
-                    btn_B.config(command = close)
-                    btn_A.config(command = lambda: question(gameFrame))
-                    btn_C.config(command = lambda: question(gameFrame))
-                else:
-                    btn_C.config(command = close)
-                    btn_A.config(command = lambda: question(gameFrame))
-                    btn_B.config(command = lambda: question(gameFrame))              
-                btn_A.pack(side = tk.LEFT)
-                btn_B.pack(side = tk.LEFT)           
-                btn_C.pack(side = tk.LEFT)
-                gameFrame.pack()
+                chooseWrongButton()
             #e facciamo in modo che il cursore sia visibile al termine degli stessi
+            elif my_msg == "{question}":
+                chooseWrongButton()
             elif my_msg == "Risposta esatta!":
                 messagebox.showinfo("Esito","Esattooo!!!")
                 questionText['state'] = 'normal'
@@ -62,7 +48,6 @@ def receive():
                     text.insert(tk.END, my_msg)
                     text.insert(tk.END, '\n')
                     text['state'] = 'disabled'
-          
                 else :
                     questionText['state'] = 'normal'
                     questionText.insert(tk.END, my_msg)
@@ -80,11 +65,11 @@ def question(gameFrame):
     msg.set("{question}")
     send()
     gameFrame.destroy()
+    
 """La funzione che segue gestisce l'invio dei messaggi."""
 def send(event = None):
     my_msg = msg.get()
     msg.set("")
-    
     # invia il messaggio sul socket
     client_socket.send(bytes(my_msg, "utf8"))
     if my_msg == "{quit}":
@@ -104,6 +89,8 @@ def close(event = None):
 def on_closing(event = None):
     msg.set("{quit}")
     send()
+    window.destroy()
+    
     
 def sendAnswer():
     if not answerField.get():
@@ -118,6 +105,33 @@ def sendAnswer():
     client_socket.send(bytes(my_answer, "utf8"))
     answer.set('')
     questionText['state'] = 'disabled'
+    
+def chooseWrongButton():
+    gameFrame = tk.Frame(master = window)
+    btn_A = tk.Button(master = gameFrame, text = "A")
+    btn_B = tk.Button(master = gameFrame, text = "B")
+    btn_C = tk.Button(master = gameFrame, text = "C")
+    t = random.randint(1,3)
+    if t==1:
+        btn_A.config(command = close)
+        btn_B.config(command = lambda: question(gameFrame))
+        btn_C.config(command = lambda: question(gameFrame))
+    elif t==2:  
+        btn_B.config(command = close)
+        btn_A.config(command = lambda: question(gameFrame))
+        btn_C.config(command = lambda: question(gameFrame))
+    else:
+        btn_C.config(command = close)
+        btn_A.config(command = lambda: question(gameFrame))
+        btn_B.config(command = lambda: question(gameFrame))
+    btn_A.pack(side = tk.LEFT)
+    btn_B.pack(side = tk.LEFT)           
+    btn_C.pack(side = tk.LEFT)
+    gameFrame.pack()
+    
+def aggiornaTimer(timerLabel, time):
+    while time.contatore > 0:
+        timerLabel.config(text = time.countdown())
 
 selectChat = True
 window = tk.Tk()
@@ -141,6 +155,7 @@ btn_quit = tk.Button(master = frame, text = "Quit", command = close)
 btn_send.pack(side = tk.LEFT)
 btn_ready.pack(side = tk.LEFT)
 btn_quit.pack(side = tk.LEFT)
+btn_ready['state'] = 'disabled'
 frame.pack()
 
 window.bind('<Return>', send)
@@ -153,8 +168,7 @@ window.protocol("WM_DELETE_WINDOW", close)
 
 
 #ASPE
-questionText = tk.Text(height = 3, width = 50)
-questionText.insert(tk.END, "Domanda:\n")
+questionText = tk.Text(height = 5, width = 50)
 questionText['state'] = 'disabled'
 answer = tk.StringVar()
 answerField = tk.Entry(width = 25, textvariable = answer)

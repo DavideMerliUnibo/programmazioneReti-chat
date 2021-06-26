@@ -44,9 +44,10 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
     players.append(player)
     
     #da il benvenuto al client e gli indica come fare per uscire dalla chat quando ha terminato
-    benvenuto = 'Benvenuto %s! Il tuo ruolo è %s\n.' % (nome, player.ruolo)
+    client.send(bytes('{benvenuto}', 'utf8'))
+    benvenuto = 'Benvenuto %s! Il tuo ruolo è %s.\n' % (nome, player.ruolo)
     client.send(bytes(benvenuto, "utf8"))
-    client.send(bytes('Se vuoi lasciare la Chat, scrivi {quit}.', "utf8"))
+    #client.send(bytes('Se vuoi lasciare la Chat, scrivi {quit}.', "utf8"))
     client.send(bytes('Quando sei pronto a giocare scrivi {start}.', "utf8"))
     msg = "%s si è unito alla chat!" % nome
     #messaggio in broadcast con cui vengono avvisati tutti i client connessi che l'utente x è entrato
@@ -86,7 +87,7 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
             break
         elif msg == bytes("{question}", "utf8") :
             domanda = domande[r.randrange(len(domande))]
-            client.send(bytes("INIZIO GIOCO!", "utf8"))
+            client.send(bytes("{question}", "utf8"))
             client.send(bytes(domanda.domanda, "utf8"))
         else:
             broadcast(msg, nome + ": ")
