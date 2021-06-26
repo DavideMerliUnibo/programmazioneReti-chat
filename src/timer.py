@@ -20,7 +20,4 @@ class Timer:
             minuti = minuti + 1
             numero = numero - 60
         secondi = numero
-        #sistemare la stampa e poi forse va
-        s = ""
-        s = s + str(minuti) + ':' + str(secondi) + 's'
-        return s
+        return '{0:02d}:{1:02d}s'.format(minuti, secondi)
