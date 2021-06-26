@@ -26,12 +26,12 @@
 	},
 	{
 		"materia": "arte",
-		"domanda": "Sul campanello della sua casa londinese c'è scritto 'Indagatore dell'incubo': di quale detective dei fumetti si tratta?",
+		"domanda": "Sul campanello della sua casa londinese c'e' scritto 'Indagatore dell'incubo': di quale detective dei fumetti si tratta?",
 		"risposta": "dylan dog"
 	},
 	{
 		"materia": "arte",
-		"domanda": "Spugna è il nome dell'imbranato assistente di quale cattivo della letteratura?",
+		"domanda": "Spugna e' il nome dell'imbranato assistente di quale cattivo della letteratura?",
 		"risposta": "capitan uncino"
 	},
 	{
@@ -56,7 +56,7 @@
 	},
 	{
 		"materia": "scienze",
-		"domanda": "Quale mostro marino della mitologia nordica è stato probabilmente ispirato dal calamaro gigante?",
+		"domanda": "Quale mostro marino della mitologia nordica e' stato probabilmente ispirato dal calamaro gigante?",
 		"risposta": "kraken"
 	},
 	{
@@ -106,7 +106,7 @@
 	},
 	{
 		"materia": "storia",
-		"domanda": "Il nome di quale distillato tipicamente americano è uguale a quello dell'antica famiglia reale francese?",
+		"domanda": "Il nome di quale distillato tipicamente americano e' uguale a quello dell'antica famiglia reale francese?",
 		"risposta": "bourbon"
 	},
 	{
@@ -161,7 +161,7 @@
 	},
 	{
 		"materia": "sport",
-		"domanda": "Quale tennista è rimasto celebre per la frase, urlata in campo ad un arbitro, che diceva 'You cannot be serious'?",
+		"domanda": "Quale tennista e' rimasto celebre per la frase, urlata in campo ad un arbitro, che diceva 'You cannot be serious'?",
 		"risposta": "john mcenroe"
 	},
 	{
@@ -171,7 +171,7 @@
 	},
 	{
 		"materia": "sport",
-		"domanda": "'Charizard' e' una delle carte più ricercate di quale serie di giochi giapponese?",
+		"domanda": "'Charizard' e' una delle carte piu' ricercate di quale serie di giochi giapponese?",
 		"risposta": "pokemon"
 	},
 	{
@@ -226,7 +226,7 @@
 	},
 	{
 		"materia": "spettacolo",
-		"domanda": "Nel film Pixar 'Ribelle: the Brave', la madre di Merida è trasformata in quale animale?",
+		"domanda": "Nel film Pixar 'Ribelle: the Brave', la madre di Merida e' trasformata in quale animale?",
 		"risposta": "orso"
 	},
 	{
@@ -237,6 +237,6 @@
 	{
 		"materia": "spettacolo",
 		"domanda": "Come si chiamava il cantante dei 'Queen'?",
-		"risposta": "freddy mercury"
+		"risposta": "freddie mercury"
 	}
 ]
