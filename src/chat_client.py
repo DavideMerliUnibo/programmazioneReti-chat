@@ -12,18 +12,21 @@ def receive():
     while True:
         try:
             my_msg = client_socket.recv(BUFSIZ).decode("utf8")
+            # controllo sul msg ricevuto
             if my_msg == "{welcome}":
                 btn_ready['state'] = 'normal'
-            elif my_msg == "Start game!":
+            elif my_msg == "{startgame}":
                 #inizio timer di gioco
                 time = timer.Timer()
-                timerLabel = tk.Label(text = time.converti(time.counter))
-                timerLabel.pack()
-                timerThread = Thread(target = lambda: aggiornaTimer(timerLabel, time))
+                time.timerLabel.pack()
+                timerThread = Thread(target = lambda: aggiornaTimer(time))
                 timerThread.start()
                 gameFrame.pack()
                 chooseWrongButton()
-            #controllo sul msg ricevuto
+                text['state'] = 'normal'
+                text.insert(tk.END, "INIZIO GIOCO!")
+                text.insert(tk.END, '\n\n')
+                text['state'] = 'disabled'
             elif my_msg == "{question}":
                 chooseWrongButton()
             elif my_msg == "Risposta esatta!":
@@ -73,8 +76,7 @@ def send(event = None):
     
 """La funzione che segue segnala al server che il giocatore corrente è pronto."""
 def ready():
-    msg.set("{start}")
-    send()
+    client_socket.send(bytes("{start}", "utf8"))
     btn_ready['state'] = 'disabled'
 
 """La funzione che segue chuide la schermata del client"""
@@ -129,13 +131,13 @@ def chooseWrongButton():
     buttonFrame.pack()
     
 """La funzione che segue tiene traccia del tempo di gioco"""
-def aggiornaTimer(timerLabel, time):
-    while time.counter > 0:
-        timerLabel.config(text = time.countdown())
-    #quando è finito il tempo distruggo la schermata di gioco e avviso il server
+def aggiornaTimer(time):
+    # inizia il conto alla rovescia
+    time.countdown()
+    # quando è finito il tempo distruggo la schermata di gioco e avviso il server
     client_socket.send(bytes("{gameover}", "utf8"))
+    time.timerLabel.destroy()
     gameFrame.destroy()
-    timerLabel.destroy()
 
 
 

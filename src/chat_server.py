@@ -33,11 +33,9 @@ def gestice_client(client):
     players.append(player)
     
     client.send(bytes('{welcome}', 'utf8'))
-    welcome = 'Benvenuto %s! Il tuo ruolo è %s.\n' % (name, player.role)
-    client.send(bytes(welcome, "utf8"))
-    client.send(bytes('Quando sei pronto a giocare scrivi {start}.', "utf8"))
-    msg = "%s si è unito alla chat!" % name
-    broadcast(bytes(msg, "utf8"))
+    client.send(bytes('Benvenuto %s! Il tuo ruolo è %s.\n' % (name, player.role), "utf8"))
+    client.send(bytes('Per iniziare il gioco clicca sul pulsante Ready.\n', "utf8"))
+    broadcast(bytes("%s si è unito alla chat!" % name, "utf8"))
     
     #controlli sul msg arrivato al server
     question = None    
@@ -61,11 +59,11 @@ def gestice_client(client):
             global ready
             ready = ready + 1
             print("ready:", ready)
-            broadcast(bytes("%s è pronto a giocare . . .\n" % name, "utf8"))
+            broadcast(bytes("%s è pronto a giocare . . ." % name, "utf8"))
             if(len(clients) > 1 and ready == len(clients)):
                 global startGame
                 startGame = True
-                broadcast(bytes("Start game!", "utf8"))
+                broadcast(bytes("{startgame}", "utf8"))
         elif msg == bytes("{quit}", "utf8"):
             broadcast(bytes("%s ha abbandonato la Chat." % name, "utf8"))
             client.send(bytes("{quit}", "utf8"))
