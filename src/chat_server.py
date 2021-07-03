@@ -60,12 +60,15 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
     while True:
         msg = client.recv(BUFSIZ)
         if domanda != None:
+            domande.remove(domanda)
+            score_modifier = 2 if dictionary.get(player.ruolo) == domanda.materia else 1
             if bytes(domanda.risposta, "utf8").lower() == msg.lower():
                 client.send(bytes("Risposta esatta!", "utf8"))
-                player.punteggio = player.punteggio + 1
+                player.punteggio = player.punteggio + score_modifier
             else:
                 client.send(bytes("Risposta sbagliata!", "utf8"))
-                player.punteggio = player.punteggio - 1
+                if player.punteggio > 0:
+                    player.punteggio = player.punteggio - score_modifier
             client.send(bytes("Adesso hai " + str(player.punteggio) + (" punti." if player.punteggio != 1 else " punto."), "utf8"))
             domanda = None
 
@@ -89,6 +92,9 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
             domanda = domande[r.randrange(len(domande))]
             client.send(bytes("{question}", "utf8"))
             client.send(bytes(domanda.domanda, "utf8"))
+        elif msg == bytes("{gameover}", "utf8"):
+            winner = getWinner()
+            client.send(bytes("Tempo scaduto! Il vincitore è %s!" % winner.nome, "utf8"))
         else:
             broadcast(msg, nome + ": ")
             
@@ -98,6 +104,13 @@ def gestice_client(client):  # Prende il socket del client come argomento della 
 def broadcast(msg, prefisso=""):  # il prefisso è usato per l'identificazione del nome.
     for utente in clients:
         utente.send(bytes(prefisso, "utf8") + msg)
+        
+def getWinner():
+    winner = players[0]
+    for p in players:
+        if p.punteggio > winner.punteggio:
+            winner = p
+    return p
 
         
 clients = {}
@@ -112,6 +125,13 @@ with open(os.getcwd() + '\\domande.json') as f:
     data = json.load(f)
 for valore in data:
     domande.append(d.Domanda(valore['materia'], valore['domanda'], valore['risposta']));
+dictionary = {"atleta": "sport",
+              "artista": "arte",
+              "geografo": "geografia",
+              "attore": "spettacolo",
+              "scienziato": "scienze",
+              "storico": "storia"}
+
 
 HOST = ''
 PORT = 53000

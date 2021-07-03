@@ -132,6 +132,7 @@ def chooseWrongButton():
 def aggiornaTimer(timerLabel, time):
     while time.contatore > 0:
         timerLabel.config(text = time.countdown())
+    client_socket.send(bytes("{gameover}", "utf8"))
 
 selectChat = True
 window = tk.Tk()
