@@ -6,7 +6,7 @@ class Timer:
     
     def __init__(self):
         Thread.__init__(self)
-        self.contatore = 120
+        self.contatore = 20
         
     def countdown(cls):
         while cls.contatore > 0:
