@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-"""Script relativa alla chat del client utilizzato per lanciare la GUI Tkinter."""
 from socket import AF_INET, socket, SOCK_STREAM
 import tkinter as tk
 from tkinter import messagebox
@@ -12,24 +11,19 @@ import timer
 def receive():
     while True:
         try:
-            #quando viene chiamata la funzione receive, si mette in ascolto dei messaggi che
-            #arrivano sul socket
             my_msg = client_socket.recv(BUFSIZ).decode("utf8")
-            if my_msg == "{benvenuto}":
+            if my_msg == "{welcome}":
                 btn_ready['state'] = 'normal'
-            elif my_msg == "INIZIO GIOCO!":
-                #inizio timer
+            elif my_msg == "Start game!":
+                #inizio timer di gioco
                 time = timer.Timer()
-                timerLabel = tk.Label(text = time.converti(time.contatore))
+                timerLabel = tk.Label(text = time.converti(time.counter))
                 timerLabel.pack()
                 timerThread = Thread(target = lambda: aggiornaTimer(timerLabel, time))
                 timerThread.start()
-                #creazione pulsanti e area di testo delle domande
-                questionText.pack()
-                answerField.pack()
-                btn_answer.pack()
+                gameFrame.pack()
                 chooseWrongButton()
-            #e facciamo in modo che il cursore sia visibile al termine degli stessi
+            #controllo sul msg ricevuto
             elif my_msg == "{question}":
                 chooseWrongButton()
             elif my_msg == "Risposta esatta!":
@@ -53,18 +47,19 @@ def receive():
                     questionText.insert(tk.END, my_msg)
                     questionText.insert(tk.END, '\n')
                     questionText['state'] = 'disabled'
-            # Nel caso di errore e' probabile che il client abbia abbandonato la chat.
         except OSError:  
             break
 
-def question(gameFrame):
+"""La funzione mette il client in attesa di una domanda."""
+def question(buttonFrame):
     global selectChat 
     selectChat = False
     answerField['state'] = 'normal'
     entryField['state'] = 'disabled'
+    btn_answer['state'] = 'normal'
     msg.set("{question}")
     send()
-    gameFrame.destroy()
+    buttonFrame.destroy()
     
 """La funzione che segue gestisce l'invio dei messaggi."""
 def send(event = None):
@@ -75,12 +70,14 @@ def send(event = None):
     if my_msg == "{quit}":
         client_socket.close()
         window.close()
-        
+    
+"""La funzione che segue segnala al server che il giocatore corrente è pronto."""
 def ready():
     msg.set("{start}")
     send()
     btn_ready['state'] = 'disabled'
-    
+
+"""La funzione che segue chuide la schermata del client"""
 def close(event = None):
     window.destroy()
     sys.exit()
@@ -91,7 +88,7 @@ def on_closing(event = None):
     send()
     window.destroy()
     
-    
+"""La funzione che segue invia la risposta alla domanda al server."""
 def sendAnswer():
     if not answerField.get():
         messagebox.showwarning("Attenzione","Inserire risposta!")
@@ -100,55 +97,61 @@ def sendAnswer():
     selectChat = True
     entryField['state'] = 'normal'
     answerField['state']='disabled'
+    btn_answer['state']='disabled'
     questionText['state'] = 'normal'
     my_answer = answer.get()
     client_socket.send(bytes(my_answer, "utf8"))
     answer.set('')
     questionText['state'] = 'disabled'
-    
+
+"""La funzione che segue crea tre pulsanti e ne sceglie uno sbagliato in modo randomico."""
 def chooseWrongButton():
-    gameFrame = tk.Frame(master = window)
-    btn_A = tk.Button(master = gameFrame, text = "A")
-    btn_B = tk.Button(master = gameFrame, text = "B")
-    btn_C = tk.Button(master = gameFrame, text = "C")
+    buttonFrame = tk.Frame(master = gameFrame)
+    btn_A = tk.Button(master = buttonFrame, text = "A")
+    btn_B = tk.Button(master = buttonFrame, text = "B")
+    btn_C = tk.Button(master = buttonFrame, text = "C")
     t = random.randint(1,3)
     if t==1:
         btn_A.config(command = close)
-        btn_B.config(command = lambda: question(gameFrame))
-        btn_C.config(command = lambda: question(gameFrame))
+        btn_B.config(command = lambda: question(buttonFrame))
+        btn_C.config(command = lambda: question(buttonFrame))
     elif t==2:  
         btn_B.config(command = close)
-        btn_A.config(command = lambda: question(gameFrame))
-        btn_C.config(command = lambda: question(gameFrame))
+        btn_A.config(command = lambda: question(buttonFrame))
+        btn_C.config(command = lambda: question(buttonFrame))
     else:
         btn_C.config(command = close)
-        btn_A.config(command = lambda: question(gameFrame))
-        btn_B.config(command = lambda: question(gameFrame))
+        btn_A.config(command = lambda: question(buttonFrame))
+        btn_B.config(command = lambda: question(buttonFrame))
     btn_A.pack(side = tk.LEFT)
     btn_B.pack(side = tk.LEFT)           
     btn_C.pack(side = tk.LEFT)
-    gameFrame.pack()
+    buttonFrame.pack()
     
+"""La funzione che segue tiene traccia del tempo di gioco"""
 def aggiornaTimer(timerLabel, time):
-    while time.contatore > 0:
+    while time.counter > 0:
         timerLabel.config(text = time.countdown())
+    #quando è finito il tempo distruggo la schermata di gioco e avviso il server
     client_socket.send(bytes("{gameover}", "utf8"))
+    gameFrame.destroy()
+    timerLabel.destroy()
+
+
 
 selectChat = True
+
+#creazione prima parte gui(chat)
 window = tk.Tk()
 window.title("Chatgame")
-
 text = tk.Text(height = 15, width = 50)
 text['state'] = 'disabled'
 text.pack()
-
 label = tk.Label(text = "Write your messages here:")
 label.pack()
-
 msg = tk.StringVar()
 entryField = tk.Entry(width = 25, textvariable = msg)
 entryField.pack()
-
 frame = tk.Frame(master = window)
 btn_send = tk.Button(master = frame, text = "Send", command = send)
 btn_ready = tk.Button(master = frame, text = "Ready", command = ready)
@@ -158,30 +161,22 @@ btn_ready.pack(side = tk.LEFT)
 btn_quit.pack(side = tk.LEFT)
 btn_ready['state'] = 'disabled'
 frame.pack()
-
 window.bind('<Return>', send)
 window.bind('<Escape>', close)
 window.protocol("WM_DELETE_WINDOW", close)
 
 
-
-
-
-
-#ASPE
-questionText = tk.Text(height = 5, width = 50)
+#creazione seconda parte gui(gioco)
+gameFrame = tk.Frame(master = window)
+questionText = tk.Text(height = 5, width = 50, master = gameFrame)
+questionText.pack()
 questionText['state'] = 'disabled'
 answer = tk.StringVar()
-answerField = tk.Entry(width = 25, textvariable = answer)
-btn_answer = tk.Button(text = 'Answer', command = sendAnswer)
-#OK
-
-
-
-
-
-
-
+answerField = tk.Entry(width = 25, textvariable = answer, master = gameFrame)
+answerField.pack()
+btn_answer = tk.Button(text = 'Answer', command = sendAnswer, master = gameFrame)
+btn_answer['state'] = 'disabled'
+btn_answer.pack()
 
 
 #----Connessione al Server----
@@ -193,14 +188,10 @@ HOST = '127.0.0.1'
 PORT = 53000
 #else:
     #PORT = int(PORT)
-
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
-
 client_socket = socket(AF_INET, SOCK_STREAM)
 client_socket.connect(ADDR)
-
 receive_thread = Thread(target=receive)
 receive_thread.start()
-# Avvia l'esecuzione della Finestra Chat.
 tk.mainloop()
