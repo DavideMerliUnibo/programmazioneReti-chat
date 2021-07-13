@@ -65,10 +65,9 @@ def gestice_client(client):
                 startGame = True
                 broadcast(bytes("{startgame}", "utf8"))
         elif msg == bytes("{quit}", "utf8"):
+            players.remove(player)
+            clients.pop(client)
             broadcast(bytes("%s ha abbandonato la Chat." % name, "utf8"))
-            client.send(bytes("{quit}", "utf8"))
-            client.close()
-            del clients[client]
             break
         elif msg == bytes("{question}", "utf8") :
             question = questions[r.randrange(len(questions))]

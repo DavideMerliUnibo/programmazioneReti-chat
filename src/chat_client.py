@@ -17,9 +17,9 @@ def receive():
                 btn_ready['state'] = 'normal'
             elif my_msg == "{startgame}":
                 #inizio timer di gioco
-                time = timer.Timer()
+                
                 time.timerLabel.pack()
-                timerThread = Thread(target = lambda: aggiornaTimer(time))
+                
                 timerThread.start()
                 gameFrame.pack()
                 chooseWrongButton()
@@ -81,14 +81,10 @@ def ready():
 
 """La funzione che segue chuide la schermata del client"""
 def close(event = None):
+    client_socket.send(bytes("{quit}", "utf8"))
+    time.running = False
     window.destroy()
     sys.exit()
-
-"""La funzione che segue viene invocata quando viene chiusa la finestra della chat."""
-def on_closing(event = None):
-    msg.set("{quit}")
-    send()
-    window.destroy()
     
 """La funzione che segue invia la risposta alla domanda al server."""
 def sendAnswer():
@@ -140,7 +136,6 @@ def aggiornaTimer(time):
     gameFrame.destroy()
 
 
-
 selectChat = True
 
 #creazione prima parte gui(chat)
@@ -167,7 +162,6 @@ window.bind('<Return>', send)
 window.bind('<Escape>', close)
 window.protocol("WM_DELETE_WINDOW", close)
 
-
 #creazione seconda parte gui(gioco)
 gameFrame = tk.Frame(master = window)
 questionText = tk.Text(height = 5, width = 50, master = gameFrame)
@@ -180,6 +174,9 @@ btn_answer = tk.Button(text = 'Answer', command = sendAnswer, master = gameFrame
 btn_answer['state'] = 'disabled'
 btn_answer.pack()
 
+# Inizializzazione timer globale
+time = timer.Timer()
+timerThread = Thread(target = lambda: aggiornaTimer(time))
 
 #----Connessione al Server----
 #HOST = input('Inserire il Server host: ')
