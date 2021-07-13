@@ -48,12 +48,12 @@ def gestice_client(client):
             score_modifier = 2 if dictionary.get(player.role) == question.subject else 1
             if bytes(question.answer, "utf8").lower() == msg.lower():
                 client.send(bytes("Risposta esatta!", "utf8"))
-                player.points = player.points + score_modifier
+                player.score += score_modifier
             else:
                 client.send(bytes("Risposta sbagliata!", "utf8"))
-                if player.points > 0:
-                    player.points = player.points - score_modifier
-            client.send(bytes("Adesso hai " + str(player.points) + (" punti." if player.points != 1 else " punto."), "utf8"))
+                if player.score > 0:
+                    player.score -= score_modifier
+            client.send(bytes("Adesso hai " + str(player.score) + (" punti." if player.score != 1 else " punto."), "utf8"))
             question = None
             #una volta entraton in questa if devo saltare tutto il resto del codice
             continue
