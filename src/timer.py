@@ -8,7 +8,7 @@ class Timer:
     
     def __init__(self, ):
         Thread.__init__(self)
-        self.counter = 20
+        self.counter = 120
         self.running = True
         self.timerLabel = tk.Label(text = self.converti(self.counter))
         
