@@ -10,7 +10,7 @@ class Timer:
         Thread.__init__(self)
         self.counter = 120
         self.running = True
-        self.timerLabel = tk.Label(text = self.converti(self.counter))
+        self.timerLabel = tk.Label(text = self.convert(self.counter))
         
     def countdown(cls):
         while cls.counter > 0:
@@ -18,9 +18,9 @@ class Timer:
                 sys.exit(1)
             t.sleep(1)
             cls.counter -= 1
-            cls.timerLabel.config(text = cls.converti(cls.counter))
+            cls.timerLabel.config(text = cls.convert(cls.counter))
             
-    def converti(cls, num):
+    def convert(cls, num):
         minutes = 0
         while num >= 60:
             minutes += 1

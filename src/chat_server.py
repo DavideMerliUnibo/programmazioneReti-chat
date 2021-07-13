@@ -10,6 +10,8 @@ import random as r
 """ La funzione che segue accetta le connessioni  dei client in entrata."""
 def accetta_connessioni_in_entrata():
     while not startGame:
+        if startGame:
+            break
         client, client_address = SERVER.accept()
         print("%s:%s si è collegato." % client_address)
         client.send(bytes("Salve! Digita il tuo Nome seguito dal tasto Invio!", "utf8"))
