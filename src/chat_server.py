@@ -77,7 +77,7 @@ def gestice_client(client):
             client.send(bytes(question.question, "utf8"))
         elif msg == bytes("{gameover}", "utf8"):
             winner = getWinner()
-            client.send(bytes("Tempo scaduto! Il vincitore è %s (punti = %d)!" % (winner.name, winner.points), "utf8"))
+            client.send(bytes("Tempo scaduto! Il vincitore è %s (punti = %d)!" % (winner.name, winner.score), "utf8"))
         else:
             broadcast(msg, name + ": ")
             
@@ -91,7 +91,7 @@ def broadcast(msg, prefix=""):
 def getWinner():
     winner = players[0]
     for cur in players:
-        if cur.points > winner.points:
+        if cur.score > winner.score:
             winner = cur
     return winner
 

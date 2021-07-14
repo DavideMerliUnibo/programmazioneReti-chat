@@ -172,7 +172,7 @@ questionText['state'] = 'disabled'
 answer = tk.StringVar()
 answerField = tk.Entry(width = 25, textvariable = answer, master = gameFrame)
 answerField.pack()
-btn_answer = tk.Button(text = 'Answer', command = sendAnswer, master = gameFrame)
+btn_answer = tk.Button(text = 'Rispondi', command = sendAnswer, master = gameFrame)
 btn_answer['state'] = 'disabled'
 btn_answer.pack()
 inner_label = tk.Label(master = gameFrame, text = "Scegli uno dei tre pulsanti per rispondere ad una domanda:")
