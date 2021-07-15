@@ -9,9 +9,7 @@ import random as r
 
 """ La funzione che segue accetta le connessioni  dei client in entrata."""
 def accetta_connessioni_in_entrata():
-    while not startGame:
-        if startGame:
-            break
+    while True:
         client, client_address = SERVER.accept()
         print("%s:%s si è collegato." % client_address)
         client.send(bytes("Salve! Digita il tuo Nome seguito dal tasto Invio!", "utf8"))
@@ -29,6 +27,10 @@ def gestice_client(client):
                 client.send(bytes('Nome già in uso! Scrivere un altro nome.', 'utf8'))
                 playerPresent = True
                 break
+    global startGame
+    if startGame:
+        client.send(bytes('Mi dispiace: la partita è già iniziata!\n', "utf8"))
+        return
     
     clients[client] = name
     player = p.Player(name, roles[r.randrange(6)], 0)
@@ -36,7 +38,7 @@ def gestice_client(client):
     
     client.send(bytes('{welcome}', 'utf8'))
     client.send(bytes('Benvenuto %s! Il tuo ruolo è %s.\n' % (name, player.role), "utf8"))
-    client.send(bytes('Per iniziare il gioco clicca sul pulsante Ready.\n', "utf8"))
+    client.send(bytes('Per iniziare il gioco clicca sul pulsante "Pronto".\n', "utf8"))
     broadcast(bytes("%s si è unito alla chat!" % name, "utf8"))
     
     #controlli sul msg arrivato al server
@@ -55,15 +57,15 @@ def gestice_client(client):
                     player.score -= score_modifier
             client.send(bytes("Adesso hai " + str(player.score) + (" punti." if player.score != 1 else " punto."), "utf8"))
             question = None
-            #una volta entraton in questa if devo saltare tutto il resto del codice
+            #una volta entratonin questa if devo saltare tutto il resto del codice
             continue
-        if msg == bytes("{start}", "utf8"):
+        if msg == bytes("{ready}", "utf8"):
             global ready
             ready = ready + 1
             print("ready:", ready)
             broadcast(bytes("%s è pronto a giocare . . ." % name, "utf8"))
             if(len(clients) > 1 and ready == len(clients)):
-                global startGame
+                #global startGame
                 startGame = True
                 broadcast(bytes("{startgame}", "utf8"))
         elif msg == bytes("{quit}", "utf8"):

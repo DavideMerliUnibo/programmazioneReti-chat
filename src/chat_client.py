@@ -16,10 +16,7 @@ def receive():
             if my_msg == "{welcome}":
                 btn_ready['state'] = 'normal'
             elif my_msg == "{startgame}":
-                #inizio timer di gioco
-                
                 time.timerLabel.pack()
-                
                 timerThread.start()
                 gameFrame.pack()
                 chooseWrongButton()
@@ -76,7 +73,7 @@ def send(event = None):
     
 """La funzione che segue segnala al server che il giocatore corrente è pronto."""
 def ready():
-    client_socket.send(bytes("{start}", "utf8"))
+    client_socket.send(bytes("{ready}", "utf8"))
     btn_ready['state'] = 'disabled'
 
 """La funzione che segue chuide la schermata del client"""
