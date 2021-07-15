@@ -6,12 +6,12 @@
 	},
 	{
 		"materia": "arte",
-		"domanda": "A quale bevanda Johan Sebastian Bach dedicò una composizione? (té, caffé o cioccolata)",
-		"risposta": "caffé"
+		"domanda": "A quale bevanda Johan Sebastian Bach dedicò una composizione? (te', caffe' o cioccolata)",
+		"risposta": "caffe'"
 	},
 	{
 		"materia": "arte",
-		"domanda": "Chi è l'autore del ciclo di romanzi intitolati 'Una serie di sfortunati eventi'?",
+		"domanda": "Chi e' l'autore del ciclo di romanzi intitolati 'Una serie di sfortunati eventi'?",
 		"risposta": "lemony snicket"
 	},
 	{
@@ -26,12 +26,12 @@
 	},
 	{
 		"materia": "arte",
-		"domanda": "Sul campanello della sua casa londinese c'è scritto 'Indagatore dell'incubo': di quale detective dei fumetti si tratta?",
+		"domanda": "Sul campanello della sua casa londinese c'e' scritto 'Indagatore dell'incubo': di quale detective dei fumetti si tratta?",
 		"risposta": "dylan dog"
 	},
 	{
 		"materia": "arte",
-		"domanda": "Spugna è il nome dell'imbranato assistente di quale cattivo della letteratura?",
+		"domanda": "Spugna e' il nome dell'imbranato assistente di quale cattivo della letteratura?",
 		"risposta": "capitan uncino"
 	},
 	{
@@ -56,12 +56,12 @@
 	},
 	{
 		"materia": "scienze",
-		"domanda": "Quale mostro marino della mitologia nordica è stato probabilmente ispirato dal calamaro gigante?",
+		"domanda": "Quale mostro marino della mitologia nordica e' stato probabilmente ispirato dal calamaro gigante?",
 		"risposta": "kraken"
 	},
 	{
 		"materia": "scienze",
-		"domanda": "Quale gadget sta diventando una scocciatura di portata mondiale, vista la sua capacità di invadere spazi aerei pubblici e privati?",
+		"domanda": "Quale gadget sta diventando una scocciatura di portata mondiale, vista la sua capacita' di invadere spazi aerei pubblici e privati?",
 		"risposta": "drone"
 	},
 	{
@@ -76,7 +76,7 @@
 	},
 	{
 		"materia": "scienze",
-		"domanda": "Quale paradossale legge stabilisce che una fetta di pane cadrà sempre dal lato imburrato?",
+		"domanda": "Quale paradossale legge stabilisce che una fetta di pane cadra' sempre dal lato imburrato?",
 		"risposta": "legge di murphy"
 	},
 	{
@@ -86,7 +86,7 @@
 	},
 	{
 		"materia": "storia",
-		"domanda": "A che età preistorica risale Otzi, la mummia rinvenuta nel 1991 sulle Alpi Venoste?",
+		"domanda": "A che eta' preistorica risale Otzi, la mummia rinvenuta nel 1991 sulle Alpi Venoste?",
 		"risposta": "età del bronzo"
 	},
 	{
@@ -96,7 +96,7 @@
 	},
 	{
 		"materia": "storia",
-		"domanda": "Quale lotta dinastica per il trono inglese ispirò 'Le cronache del ghiaccio e del fuoco' di R. R. Martin?",
+		"domanda": "Quale lotta dinastica per il trono inglese ispiro' 'Le cronache del ghiaccio e del fuoco' di R. R. Martin?",
 		"risposta": "guerra delle due rose"
 	},
 	{
@@ -106,7 +106,7 @@
 	},
 	{
 		"materia": "storia",
-		"domanda": "Il nome di quale distillato tipicamente americano è uguale a quello dell'antica famiglia reale francese?",
+		"domanda": "Il nome di quale distillato tipicamente americano e' uguale a quello dell'antica famiglia reale francese?",
 		"risposta": "bourbon"
 	},
 	{
@@ -116,22 +116,22 @@
 	},
 	{
 		"materia": "storia",
-		"domanda": "Con quale nome è noto in tutto il mondo l'anfiteatro Flavio, inaugurato dall'imperatore Tito nell'80 d. C. ?",
+		"domanda": "Con quale nome e' noto in tutto il mondo l'anfiteatro Flavio, inaugurato dall'imperatore Tito nell'80 d. C. ?",
 		"risposta": "colosseo"
 	},
 	{
 		"materia": "geografia",
-		"domanda": "Qaule capitale vanta la più antica metropolitana del mondo, inaugurata il 10 gennaio 1863?",
+		"domanda": "Qaule capitale vanta la piu' antica metropolitana del mondo, inaugurata il 10 gennaio 1863?",
 		"risposta": "londra"
 	},
 	{
 		"materia": "geografia",
-		"domanda": "Quale minuscolo principato è il paese con la più alta densità di popolazione al mondo?",
+		"domanda": "Quale minuscolo principato e' il paese con la piu' alta densita' di popolazione al mondo?",
 		"risposta": "monaco"
 	},
 	{
 		"materia": "geografia",
-		"domanda": "Qual è la seconda linungua più parlata al mondo?",
+		"domanda": "Qual e' la seconda linungua piu' parlata al mondo?",
 		"risposta": "spagnolo"
 	},
 	{
@@ -141,7 +141,7 @@
 	},
 	{
 		"materia": "geografia",
-		"domanda": "Fu amato da Byron e Shelley, il quale vi annegò nel 1822 in un naufragio: quale golfo è soprannominato 'golfo dei poeti'?",
+		"domanda": "Fu amato da Byron e Shelley, il quale vi annego' nel 1822 in un naufragio: quale golfo e' soprannominato 'golfo dei poeti'?",
 		"risposta": "golfo della spezia"
 	},
 	{
@@ -161,18 +161,18 @@
 	},
 	{
 		"materia": "sport",
-		"domanda": "Quale tennista è rimastocelebre per la frase, urlata in campo ad un arbitro, che diceva 'You cannot be serious'?",
+		"domanda": "Quale tennista e' rimasto celebre per la frase, urlata in campo ad un arbitro, che diceva 'You cannot be serious'?",
 		"risposta": "john mcenroe"
 	},
 	{
 		"materia": "sport",
-		"domanda": "Tra le due società calicistiche romane, Lazio e Roma, qual è la più antica?",
+		"domanda": "Tra le due societa' calicistiche romane, Lazio e Roma, qual e' la piu' antica?",
 		"risposta": "lazio"
 	},
 	{
 		"materia": "sport",
-		"domanda": "'Charizard' è una delle carte più ricercate di quale serie di giochi giapponese?",
-		"risposta": "pokémon"
+		"domanda": "'Charizard' e' una delle carte piu' ricercate di quale serie di giochi giapponese?",
+		"risposta": "pokemon"
 	},
 	{
 		"materia": "sport",
@@ -196,12 +196,12 @@
 	},
 	{
 		"materia": "sport",
-		"domanda": "Secondo Federico Fellini, la vita è una combinazione di magia e cos'altro? (pizza, pasta o ragù)",
+		"domanda": "Secondo Federico Fellini, la vita e' una combinazione di magia e cos'altro? (pizza, pasta o ragu')",
 		"risposta": "pizza"
 	},
 	{
 		"materia": "spettacolo",
-		"domanda": "Quale serie tv  britannica, che trattadel progresso tecnologico e delle sue ricadute, è stata acquistata e rilanciata nel 2016 da Netflix?",
+		"domanda": "Quale serie tv  britannica, che tratta del progresso tecnologico e delle sue ricadute, e' stata acquistata e rilanciata nel 2016 da Netflix?",
 		"risposta": "black mirror"
 	},
 	{
@@ -211,12 +211,12 @@
 	},
 	{
 		"materia": "spettacolo",
-		"domanda": "In quale film la macchina del tempo è un'auto sportiva, la Delorean DMC-12?",
+		"domanda": "In quale film la macchina del tempo e' un'auto sportiva, la Delorean DMC-12?",
 		"risposta": "ritorno al futuro"
 	},
 	{
 		"materia": "spettacolo",
-		"domanda": "In quale trasmissione radiofonica si tiene la Coppa Rimetti, competizione in cui si sfidano le canzoni italiane più inascoltabili?",
+		"domanda": "In quale trasmissione radiofonica si tiene la Coppa Rimetti, competizione in cui si sfidano le canzoni italiane piu' inascoltabili?",
 		"risposta": "ruggito del coniglio"
 	},
 	{
@@ -226,7 +226,7 @@
 	},
 	{
 		"materia": "spettacolo",
-		"domanda": "Nel film Pixar 'Ribelle: the Brave', la madre di Merida è trasformata in quale animale?",
+		"domanda": "Nel film Pixar 'Ribelle: the Brave', la madre di Merida e' trasformata in quale animale?",
 		"risposta": "orso"
 	},
 	{
@@ -237,6 +237,6 @@
 	{
 		"materia": "spettacolo",
 		"domanda": "Come si chiamava il cantante dei 'Queen'?",
-		"risposta": "freddy mercury"
+		"risposta": "freddie mercury"
 	}
 ]

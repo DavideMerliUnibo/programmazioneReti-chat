@@ -1,77 +1,142 @@
 #!/usr/bin/env python3
-"""Script Python per la realizzazione di un Server multithread
-per connessioni CHAT asincrone.
-Corso di Programmazione di Reti - Università di Bologna"""
-
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
-# import domanda.py as domanda
-# import giocatore.py as giocatore
-
+import question as q
+import player as p
+import json
+import random as r
 
 """ La funzione che segue accetta le connessioni  dei client in entrata."""
-def accetta_connessioni_in_entrata():
-    while not startGame:
+def accept_inward_connection():
+    while True:
         client, client_address = SERVER.accept()
         print("%s:%s si è collegato." % client_address)
-        #al client che si connette per la prima volta fornisce alcune indicazioni di utilizzo
         client.send(bytes("Salve! Digita il tuo Nome seguito dal tasto Invio!", "utf8"))
-        # ci serviamo di un dizionario per registrare i client
         indirizzi[client] = client_address
-        #diamo inizio all'attività del Thread - uno per ciascun client
         Thread(target=gestice_client, args=(client,)).start()
-        
 
 """La funzione seguente gestisce la connessione di un singolo client."""
-def gestice_client(client):  # Prende il socket del client come argomento della funzione.
-    nome = client.recv(BUFSIZ).decode("utf8")
-    #da il benvenuto al client e gli indica come fare per uscire dalla chat quando ha terminato
-    benvenuto = 'Benvenuto %s!' % nome
-    client.send(bytes(benvenuto, "utf8"))
-    client.send(bytes('Se vuoi lasciare la Chat, scrivi {quit}.', "utf8"))
-    client.send(bytes('Quando sei pronto a giocare scrivi {start}.', "utf8"))
-    msg = "%s si è unito alla chat!" % nome
-    #messaggio in broadcast con cui vengono avvisati tutti i client connessi che l'utente x è entrato
-    broadcast(bytes(msg, "utf8"))
-    #aggiorna il dizionario clients creato all'inizio
-    clients[client] = nome
+def gestice_client(client):  
+    playerPresent = True
+    while playerPresent:
+        playerPresent = False
+        name = client.recv(BUFSIZ).decode("utf8")
+        for cur in players:
+            if(cur.name == name):
+                client.send(bytes('Nome già in uso! Scrivere un altro nome.', 'utf8'))
+                playerPresent = True
+                break
+    global startGame
+    if startGame:
+        client.send(bytes('Mi dispiace: la partita è già iniziata!\n', "utf8"))
+        return
     
+    clients[client] = name
+    player = p.Player(name, roles[r.randrange(6)], 0)
+    players.append(player)
     
-    print("players:", len(clients))
+    client.send(bytes('{welcome}', 'utf8'))
+    client.send(bytes('Benvenuto %s! Il tuo ruolo è %s.\n' % (name, player.role), "utf8"))
+    client.send(bytes('Per iniziare il gioco clicca sul pulsante "Pronto".\n', "utf8"))
+    broadcast(bytes("%s si è unito alla chat!" % name, "utf8"))
     
-#si mette in ascolto del thread del singolo client e ne gestisce l'invio dei messaggi o l'uscita dalla Chat
+    #controlli sul msg arrivato al server
+    question = None    
     while True:
         msg = client.recv(BUFSIZ)
-        if msg != bytes("{quit}", "utf8") and msg != bytes("{start}", "utf8"):
-            broadcast(msg, nome+": ")
-        elif msg == bytes("{quit}", "utf8"):
-            broadcast(bytes("%s ha abbandonato la Chat." % nome, "utf8"))
-            client.send(bytes("{quit}", "utf8"))
-            client.close()
-            del clients[client]
-            break
-        else:
+        if question != None:
+            if msg == bytes("{gameover}", "utf8"):
+                winner = getWinner()
+                startGame = False
+                client.send(bytes("{questionstop}", "utf8"))
+                client.send(bytes("Tempo scaduto! Il vincitore è %s (punti = %d)!" % (winner.name, winner.score), "utf8"))
+                question = None
+                continue
+            questions.remove(question)
+            score_modifier = 2 if dictionary.get(player.role) == question.subject else 1
+            if bytes(question.answer, "utf8").lower() == msg.lower():
+                client.send(bytes("Risposta esatta!", "utf8"))
+                player.score += score_modifier
+            else:
+                client.send(bytes("Risposta sbagliata!", "utf8"))
+                if player.score > 0:
+                    player.score -= score_modifier
+            client.send(bytes("Adesso hai " + str(player.score) + (" punti." if player.score != 1 else " punto."), "utf8"))
+            question = None
+            #una volta entratonin questa if devo saltare tutto il resto del codice
+            continue
+        if msg == bytes("{ready}", "utf8"):
             global ready
             ready = ready + 1
-            print("ready:", ready)
-            broadcast(bytes("%s è pronto a giocare . . .\n" % nome, "utf8"))
+            broadcast(bytes("%s è pronto a giocare . . ." % name, "utf8"))
             if(len(clients) > 1 and ready == len(clients)):
-                global startGame
+                #global startGame
                 startGame = True
-                broadcast(bytes("INIZIO GIOCO!", "utf8"))
+                broadcast(bytes("{startgame}", "utf8"))
+        elif msg == bytes("{quit}", "utf8"):
+            players.remove(player)
+            clients.pop(client)
+            broadcast(bytes("%s ha abbandonato la Chat." % name, "utf8"))
+            if len(players) == 1 and startGame == True:
+                winner = getWinner()
+                c = list(clients.keys())[0]
+                c.send(bytes('{timestop}', "utf8"))
+            break
+        elif msg == bytes("{question}", "utf8") :
+            question = questions[r.randrange(len(questions))]
+            client.send(bytes("{question}", "utf8"))
+            client.send(bytes(question.question, "utf8"))
+        elif msg == bytes("{gameover}", "utf8"):
+            startGame = False
+            winner = getWinner()
+            client.send(bytes("Tempo scaduto! Il vincitore è %s (punti = %d)!" % (winner.name, winner.score), "utf8"))
+        else:
+            broadcast(msg, name + ": ")
             
 
 """ La funzione, che segue, invia un messaggio in broadcast a tutti i client."""
-def broadcast(msg, prefisso=""):  # il prefisso è usato per l'identificazione del nome.
-    for utente in clients:
-        utente.send(bytes(prefisso, "utf8")+msg)
-
+def broadcast(msg, prefix=""): 
+    for u in clients:
+        u.send(bytes(prefix, "utf8") + msg)
         
+""" La funzione, che segue, ricava il giocatore con il punteggio più alto tra quelli correnti."""
+def getWinner():
+    winner = players[0]
+    for cur in players:
+        if cur.score > winner.score:
+            winner = cur
+    return winner
+
+#variabili globali legate ai players
 clients = {}
+
 indirizzi = {}
+
 startGame = False
+
 ready = 0
 
+players = []
+
+roles = ["atleta","artista","geografo",
+         "attore","scienziato","storico"]
+
+dictionary = {"atleta": "sport",
+              "artista": "arte",
+              "geografo": "geografia",
+              "attore": "spettacolo",
+              "scienziato": "scienze",
+              "storico": "storia"}
+
+#variabili globali legate alla domanda
+questions = []
+f = open ('../resources/questions.json', 'rb')
+data = json.load(f)
+
+for value in data:
+    questions.append(q.Question(value['materia'], value['domanda'], value['risposta']));
+
+#variabili globali legate al server
 HOST = ''
 PORT = 53000
 BUFSIZ = 1024
@@ -83,7 +148,7 @@ SERVER.bind(ADDR)
 if __name__ == "__main__":
     SERVER.listen(5)
     print("In attesa di connessioni...")
-    ACCEPT_THREAD = Thread(target=accetta_connessioni_in_entrata)
+    ACCEPT_THREAD = Thread(target = accept_inward_connection())
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
     SERVER.close()
