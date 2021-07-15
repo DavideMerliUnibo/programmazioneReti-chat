@@ -31,11 +31,23 @@ def receive():
                 questionText['state'] = 'normal'
                 questionText.delete('1.0', tk.END)
                 questionText['state'] = 'disabled'
-            elif my_msg =="Risposta sbagliata!":
+            elif my_msg == "Risposta sbagliata!":
                 messagebox.showinfo("Esito","Sbagliato!!!")
                 questionText['state'] = 'normal'
                 questionText.delete('1.0', tk.END)
                 questionText['state'] = 'disabled'
+            elif my_msg == "{timestop}":
+                time.running = False   
+                time.timerLabel.destroy()
+                gameFrame.destroy()
+                text['state'] = 'normal'
+                text.insert(tk.END, "Gli altri giocatori hanno abbandonato, hai vinto!!")
+                text.insert(tk.END, '\n')
+                text['state'] = 'disabled'
+            elif my_msg == "{questionstop}":
+                global selectChat
+                entryField['state'] = 'normal'
+                selectChat = True
             else:
                 if selectChat:
                     text['state'] = 'normal'
@@ -180,14 +192,9 @@ time = timer.Timer()
 timerThread = Thread(target = lambda: aggiornaTimer(time))
 
 #----Connessione al Server----
-#HOST = input('Inserire il Server host: ')
-#if not HOST:
 HOST = '127.0.0.1'
-#PORT = input('Inserire la porta del server host: ')
-#if not PORT:
 PORT = 53000
-#else:
-    #PORT = int(PORT)
+
 BUFSIZ = 1024
 ADDR = (HOST, PORT)
 client_socket = socket(AF_INET, SOCK_STREAM)

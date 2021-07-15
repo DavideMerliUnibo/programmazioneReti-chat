@@ -14,9 +14,9 @@ class Timer:
         
     def countdown(cls):
         while cls.counter > 0:
+            t.sleep(1)
             if cls.running == False:
                 sys.exit(1)
-            t.sleep(1)
             cls.counter -= 1
             cls.timerLabel.config(text = cls.convert(cls.counter))
             

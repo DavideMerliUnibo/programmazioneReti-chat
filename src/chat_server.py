@@ -8,7 +8,7 @@ import os
 import random as r
 
 """ La funzione che segue accetta le connessioni  dei client in entrata."""
-def accetta_connessioni_in_entrata():
+def accept_inward_connection():
     while True:
         client, client_address = SERVER.accept()
         print("%s:%s si è collegato." % client_address)
@@ -46,6 +46,13 @@ def gestice_client(client):
     while True:
         msg = client.recv(BUFSIZ)
         if question != None:
+            if msg == bytes("{gameover}", "utf8"):
+                winner = getWinner()
+                startGame = False
+                client.send(bytes("{questionstop}", "utf8"))
+                client.send(bytes("Tempo scaduto! Il vincitore è %s (punti = %d)!" % (winner.name, winner.score), "utf8"))
+                question = None
+                continue
             questions.remove(question)
             score_modifier = 2 if dictionary.get(player.role) == question.subject else 1
             if bytes(question.answer, "utf8").lower() == msg.lower():
@@ -62,7 +69,6 @@ def gestice_client(client):
         if msg == bytes("{ready}", "utf8"):
             global ready
             ready = ready + 1
-            print("ready:", ready)
             broadcast(bytes("%s è pronto a giocare . . ." % name, "utf8"))
             if(len(clients) > 1 and ready == len(clients)):
                 #global startGame
@@ -72,12 +78,17 @@ def gestice_client(client):
             players.remove(player)
             clients.pop(client)
             broadcast(bytes("%s ha abbandonato la Chat." % name, "utf8"))
+            if len(players) == 1 and startGame == True:
+                winner = getWinner()
+                c = list(clients.keys())[0]
+                c.send(bytes('{timestop}', "utf8"))
             break
         elif msg == bytes("{question}", "utf8") :
             question = questions[r.randrange(len(questions))]
             client.send(bytes("{question}", "utf8"))
             client.send(bytes(question.question, "utf8"))
         elif msg == bytes("{gameover}", "utf8"):
+            startGame = False
             winner = getWinner()
             client.send(bytes("Tempo scaduto! Il vincitore è %s (punti = %d)!" % (winner.name, winner.score), "utf8"))
         else:
@@ -120,9 +131,8 @@ dictionary = {"atleta": "sport",
 
 #variabili globali legate alla domanda
 questions = []
-
-with open(os.getcwd() + '\\questions.json') as f:
-    data = json.load(f)
+f = open ('../resources/questions.json', 'rb')
+data = json.load(f)
 
 for value in data:
     questions.append(q.Question(value['materia'], value['domanda'], value['risposta']));
@@ -139,7 +149,7 @@ SERVER.bind(ADDR)
 if __name__ == "__main__":
     SERVER.listen(5)
     print("In attesa di connessioni...")
-    ACCEPT_THREAD = Thread(target=accetta_connessioni_in_entrata)
+    ACCEPT_THREAD = Thread(target = accept_inward_connection())
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
     SERVER.close()
